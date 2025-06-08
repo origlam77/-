@@ -1,0 +1,205 @@
+
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>אורי</title>
+  <style>
+    body{
+      font-family: Arial, sans-serif;
+      margin:0;
+      padding:0;
+      display:flex;
+      flex-direction:column;
+      min-height:100vh;
+      background:#f7f7f7;
+      color:#222;
+    }
+    header{
+      background:#0057b7;
+      color:white;
+      padding:1rem;
+      text-align:center;
+      font-size:1.5rem;
+    }
+    main{
+      flex:1;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:flex-start;
+      padding:1rem;
+    }
+    #question{
+      background:white;
+      padding:1rem 1.5rem;
+      margin:1rem 0;
+      border-radius:8px;
+      box-shadow:0 0 6px rgba(0,0,0,0.1);
+      width:100%;
+      max-width:600px;
+      font-size:1.2rem;
+    }
+    #controls{
+      display:flex;
+      gap:0.5rem;
+      flex-wrap:wrap;
+      justify-content:center;
+      margin-bottom:1rem;
+    }
+    button{
+      cursor:pointer;
+      border:none;
+      border-radius:6px;
+      padding:0.6rem 1.2rem;
+      font-size:1rem;
+      background:#ff7f00;
+      color:white;
+      transition:background 0.2s ease;
+    }
+    button:hover{
+      background:#e46c00;
+    }
+    textarea{
+      width:100%;
+      max-width:600px;
+      height:120px;
+      padding:0.5rem;
+      font-size:1rem;
+      border-radius:6px;
+      border:1px solid #ccc;
+      resize:vertical;
+      direction:rtl;
+    }
+    #feedback{
+      margin-top:0.5rem;
+      font-weight:bold;
+    }
+    #sampleAnswer{
+      margin-top:0.5rem;
+      background:#fff8e1;
+      padding:0.8rem;
+      border-left:5px solid #ffe082;
+      border-radius:6px;
+      display:none;
+      width:100%;
+      max-width:600px;
+    }
+    footer{
+      text-align:center;
+      padding:0.5rem;
+      font-size:0.8rem;
+      color:#666;
+    }
+    @media (max-width:600px){
+      #question{font-size:1rem;}
+      button{flex:1;}
+      textarea{height:100px;}
+    }
+  </style>
+</head>
+<body>
+  <header>שאלות למבואות לקצונה עורפית</header>
+  <main>
+    <div id="question">לחץ על "שאלה חדשה" כדי להתחיל</div>
+    <div id="controls">
+      <button id="nextBtn">שאלה חדשה</button>
+      <button id="checkBtn" disabled>בדוק תשובה</button>
+      <button id="showAnswerBtn" disabled>הצג תשובה לדוגמה</button>
+    </div>
+    <textarea id="userAnswer" placeholder="כתוב כאן את התשובה שלך..."></textarea>
+    <div id="feedback"></div>
+    <div id="sampleAnswer"></div>
+  </main>
+  <footer>© 2025 אורי</footer>
+
+<script>
+const qa = [
+  {
+    q: "מהם תחומי האחריות של קצין לוגיסטיקה ביחידה עורפית?",
+    a: "קצין הלוגיסטיקה אחראי על אספקה, תחזוקה, רכש, ניהול מלאי ושינוע, והוא מתאם את כל שרשרת האספקה בשגרה ובחירום כדי להבטיח רציפות מבצעית."
+  },
+  {
+    q: "כיצד תורם קצין תקשוב לפעילות השוטפת של יחידה עורפית?",
+    a: "קצין התקשוב דואג לזמינות רשתות, אבטחת מידע, תחזוקה ותכנון של מערכות התקשורת וה־IT, ותמיכת משתמשים – מה שמאפשר פיקוד ושליטה רציפה."
+  },
+  {
+    q: "מה החשיבות של רציפות תפקודית בעורף בשעת חירום?",
+    a: "רציפות תפקודית מבטיחה שהיחידה תמשיך לספק שירותים קריטיים, תומכי לחימה וסיוע אזרחי גם תחת התקפה, ובכך מקטינה פגיעה בכשירות ובחיי אדם."
+  },
+  {
+    q: "איך מתבצע תכנון כוננות ביחידה עורפית?",
+    a: "התכנון כולל הערכת איומים, קביעת רמות כוננות, הקצאת משאבים, גיוס מילואים, בדיקת כשירות ציוד ותרגולים תקופתיים לתרחישים שונים."
+  },
+  {
+    q: "מהו תפקידה של יחידת המבצעים בעורף בזמן שגרה ובחירום?",
+    a: "בשגרה היחידה מתאמת את כל הפעילות המבצעית ונהלי הביטחון; בחירום היא מנהלת הפעלה מבצעית, סנכרון עם פיקוד העורף והמטה והכוונת הכוחות."
+  },
+  {
+    q: "איך מתבצעת הערכת מצב ביחידה עורפית?",
+    a: "אוספים נתוני מודיעין, לוגיסטיקה ומשא״ן, מנתחים פערים והשפעות, בונים חלופות וממליצים למפקד על קבלת החלטות."
+  },
+  {
+    q: "מה ההבדל בין אחריות של קצין מבצעים עורפי לבין קצין מבצעים קרבי?",
+    a: "קצין מבצעים עורפי מתמקד בהגנה, סיוע אזרחי ותיאום עורפי, בעוד קצין מבצעים קרבי מתכלל את תמרון הלחימה, סיוע אש ופעילות קדמית."
+  }
+];
+
+let currentIndex = -1;
+
+const questionDiv = document.getElementById('question');
+const nextBtn = document.getElementById('nextBtn');
+const checkBtn = document.getElementById('checkBtn');
+const showAnswerBtn = document.getElementById('showAnswerBtn');
+const userAnswer = document.getElementById('userAnswer');
+const feedback = document.getElementById('feedback');
+const sampleAnswerDiv = document.getElementById('sampleAnswer');
+
+function pickQuestion(){
+  currentIndex = Math.floor(Math.random()*qa.length);
+  questionDiv.textContent = qa[currentIndex].q;
+  userAnswer.value = '';
+  feedback.textContent = '';
+  sampleAnswerDiv.style.display = 'none';
+  sampleAnswerDiv.textContent = '';
+  checkBtn.disabled = false;
+  showAnswerBtn.disabled = false;
+}
+
+function normalizeText(t){
+  return t.toLowerCase().replace(/[^א-תa-z0-9\s]/g,'').split(/\s+/).filter(Boolean);
+}
+
+function compareAnswers(user, correct){
+  const u = new Set(normalizeText(user));
+  const c = new Set(normalizeText(correct));
+  if(u.size===0) return 0;
+  let common = 0;
+  c.forEach(word=>{
+    if(u.has(word)) common++;
+  });
+  return common / c.size;
+}
+
+nextBtn.addEventListener('click', pickQuestion);
+
+checkBtn.addEventListener('click', ()=>{
+  const score = compareAnswers(userAnswer.value, qa[currentIndex].a);
+  if(score > 0.45){
+    feedback.textContent = "נראה שתשובתך טובה! (" + Math.round(score*100) + "% חפיפה)";
+    feedback.style.color = "green";
+  } else {
+    feedback.textContent = "נסה לשפר את התשובה. (" + Math.round(score*100) + "% חפיפה)";
+    feedback.style.color = "red";
+  }
+});
+
+showAnswerBtn.addEventListener('click', ()=>{
+  sampleAnswerDiv.textContent = qa[currentIndex].a;
+  sampleAnswerDiv.style.display = 'block';
+});
+
+</script>
+</body>
+</html>
