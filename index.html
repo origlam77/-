@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>אתר שאלות של אורי</title>
+  </head>
+  <body>
+    <h1>ברוך הבא לאתר השאלות של אורי!</h1>
+    <button onclick="showQuestion()">שאל אותי שאלה</button>
+    <p id="question"></p>
+
+    <script>
+      const questions = [
+        "מהם שלושת התפקידים המרכזיים של קצין מטה בתחום הלוגיסטיקה?",
+        "מה ההבדל בין פקודת קבע לפקודת יום?",
+        "מה כולל שלב הטמעת פקודה חדשה ביחידה?"
+      ];
+
+      function showQuestion() {
+        const q = questions[Math.floor(Math.random() * questions.length)];
+        document.getElementById("question").innerText = q;
+      }
+    </script>
+  </body>
+</html>
